@@ -1,6 +1,7 @@
 # Example from https://docs.microsoft.com/en-gb/azure/cognitive-services/face/quickstarts/python#detect-faces-in-images-with-face-api-using-python-a-namedetect-a
 import httplib, urllib, base64, json
 import pickle
+import pandas as pd
 
 # Generate api.p using writeapi.py
 api_key = pickle.load(open("api.p", "rb"))
@@ -13,7 +14,7 @@ headers = {
 # Request parameters.
 params = urllib.urlencode({
     'returnFaceId': 'true',
-    'returnFaceLandmarks': 'false',
+    'returnFaceLandmarks': 'true',
     'returnFaceAttributes': 'age,gender,headPose,smile,facialHair,glasses,emotion,hair,makeup,occlusion,accessories,blur,exposure,noise',
 })
 
@@ -35,6 +36,9 @@ try:
 
 except Exception as e:
     print("[Errno {0}] {1}".format(e.errno, e.strerror))
+
+df = pd.io.json.json_normalize(parsed)
+print df
 
 ####################################
 

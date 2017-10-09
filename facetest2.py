@@ -6,7 +6,7 @@ import pickle
 api_key = pickle.load(open("api.p", "rb"))
 
 headers = {
-    'Content-Type': 'application/json',
+    'Content-Type': 'application/octet-stream',
     'Ocp-Apim-Subscription-Key': api_key["subscription_key"],
 }
 
@@ -18,8 +18,8 @@ params = urllib.urlencode({
 })
 
 # The URL of a JPEG image to analyze.
-body = "{'url':'https://upload.wikimedia.org/wikipedia/commons/c/c3/RH_Louise_Lillian_Gish.jpg'}"
-
+#body = "{'url':'https://upload.wikimedia.org/wikipedia/commons/c/c3/RH_Louise_Lillian_Gish.jpg'}"
+body = open("frames/output_0150.png", "rb").read()
 try:
     # Execute the REST API call and get the response.
     conn = httplib.HTTPSConnection(api_key["uri_base"])

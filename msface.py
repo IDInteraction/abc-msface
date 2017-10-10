@@ -8,6 +8,7 @@ import cv2
 import sys
 from limit import limit
 import os
+import tempfile
 
 @limit(20,60)
 def getFaceInfo(infile):
@@ -73,10 +74,12 @@ for frame in range(args.startframe, args.endframe + 1):
     ret, img = video.read()
     if ret == False:
         print("Failed to capture frame %s" % frame)
-    cv2.imwrite("tmp.png", img)
+        
+    videoimg = tempfile.NamedTemporaryFile(suffix = ".png")
+    cv2.imwrite(videoimg.name, img)
     print("Captured frame %s" % frame)
 
-    apiresp = getFaceInfo("tmp.png")
+    apiresp = getFaceInfo(videoimg.name)
     # print (json.dumps(apiresp, sort_keys=True, indent=2))
     df = pd.io.json.json_normalize(apiresp)
 

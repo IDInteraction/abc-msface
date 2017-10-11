@@ -111,10 +111,17 @@ facedata %>%
   summarise(num_faces = n()) %>% 
   filter(num_faces != 1)
 
-# Clean bad data
+# Clean bad data and generate face rectangle area
 faceclean <- facedata %>% 
-  filter(is.na(error.code)) 
+  filter(is.na(error.code)) %>% 
+  mutate(faceRectangle.area = faceRectangle.height * faceRectangle.width)
+
   
+faceclean %>% ggplot(aes(x = frame, y = faceRectangle.area)) + geom_point()
+
+faceclean %>% ggplot(aes(x = frame)) + geom_point(aes(y = faceRectangle.left), colour = "red") +
+  geom_point(aes(y = faceRectangle.top), colour = "green") 
+
 faceclean %>% ggplot(aes(x = frame, y=faceAttributes.emotion.neutral)) + geom_point() + geom_line()
 
 faceclean %>% ggplot(aes(x = frame, y = faceAttributes.age)) + geom_point() + geom_line()
@@ -124,4 +131,5 @@ faceclean %>% ggplot(aes(x = frame)) + geom_point(aes(y = faceLandmarks.pupilLef
 
 faceclean %>% ggplot(aes(x = frame)) + geom_point(aes(y=faceLandmarks.pupilLeft.x), colour = "red") +
   geom_point(aes(y = faceLandmarks.pupilRight.x), colour = "green") 
+
 

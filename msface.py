@@ -10,6 +10,11 @@ from limit import limit
 import os
 import tempfile
 
+class APIException(Exception):
+    def __init__(self, value):
+        self.parameter = value
+    def __str__(self):
+        return repr(self.parameter)
 
 @limit(10,1)
 def getFaceInfo(infile):
@@ -37,6 +42,10 @@ def getFaceInfo(infile):
 
         # 'data' contains the JSON data. The following formats the JSON data for display.
         parsed = json.loads(data)
+
+        if 'error.code' in parsed:
+            raise APIException("Error code found in returned data")
+
         conn.close()
 
     except Exception as e:

@@ -10,6 +10,7 @@ from limit import limit
 import os
 import tempfile
 
+
 @limit(10,1)
 def getFaceInfo(infile):
     headers = {

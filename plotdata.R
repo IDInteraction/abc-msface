@@ -1,13 +1,12 @@
 # Take a quick look at the results from the MS Face API
 
 library("tidyverse")
-
+library("reshape")
+rm(list = ls())
 
 facedata <- read_csv("P07_front.msface",
                      col_types = cols(
                        frame = col_integer(),
-                       error.code = col_character(),
-                       error.message = col_character(),
                        faceAttributes.age = col_double(),
                        faceAttributes.blur.blurLevel = col_character(),
                        faceAttributes.blur.value = col_double(),
@@ -98,22 +97,14 @@ facedata <- read_csv("P07_front.msface",
                        faceRectangle.width = col_double()
                      ))
 
-# Error frames
-facedata %>% 
-  filter(!is.na(error.code))
-# Hitting rate limit - this was set, but appears to be using
-# free tier limit, not paid for 
-
-
 # Faces per frame:
 facedata %>% 
   group_by(frame) %>% 
   summarise(num_faces = n()) %>% 
   filter(num_faces != 1)
 
-# Clean bad data and generate face rectangle area
+# Generate face rectangle area
 faceclean <- facedata %>% 
-  filter(is.na(error.code)) %>% 
   mutate(faceRectangle.area = faceRectangle.height * faceRectangle.width)
 
   
@@ -132,4 +123,11 @@ faceclean %>% ggplot(aes(x = frame)) + geom_point(aes(y = faceLandmarks.pupilLef
 faceclean %>% ggplot(aes(x = frame)) + geom_point(aes(y=faceLandmarks.pupilLeft.x), colour = "red") +
   geom_point(aes(y = faceLandmarks.pupilRight.x), colour = "green") 
 
+faceclean %>% 
+  purrr::keep(is.numeric) %>% 
+  melt(id.vars = "frame") %>% 
+  ggplot(aes(value)) + 
+  geom_density() +
+  facet_wrap(~ variable, scales = "free")
 
+ggsave("P07_part1.pdf", width=2*297, height=2*210, units="mm")

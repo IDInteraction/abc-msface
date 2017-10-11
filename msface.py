@@ -10,7 +10,7 @@ from limit import limit
 import os
 import tempfile
 
-@limit(20,60)
+@limit(10,1)
 def getFaceInfo(infile):
     headers = {
         'Content-Type': 'application/octet-stream',
@@ -81,8 +81,10 @@ for frame in range(args.startframe, args.endframe + 1):
 
     apiresp = getFaceInfo(videoimg.name)
     # print (json.dumps(apiresp, sort_keys=True, indent=2))
-    df = pd.io.json.json_normalize(apiresp)
-
+    if len(apiresp) > 0:
+        df = pd.io.json.json_normalize(apiresp)
+    else:
+        print("No face found for frame %d" % frame)
     df["frame"] = frame
     df.set_index("frame", inplace = True)
 
